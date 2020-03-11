@@ -1,8 +1,8 @@
-FROM alpine:3.10 as rootfs-stage
+FROM alpine:3.11 as rootfs-stage
 MAINTAINER antonchen
 
 # environment
-ENV REL=v3.10
+ENV REL=v3.11
 ENV MIRROR=http://dl-cdn.alpinelinux.org/alpine
 
 # install packages
