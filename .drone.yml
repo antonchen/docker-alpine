@@ -1,0 +1,54 @@
+kind: pipeline
+name: alpine
+
+steps:
+- name: alpine s6 base
+  environment:
+    DOCKER_BUILDKIT: 1
+  image: plugins/docker
+  privileged: true
+  volumes:
+  - name: data
+    path: /drone
+  settings:
+    storage_path: /drone/docker-storage
+    mirror: http://mirror.docker.local
+    custom_dns: 10.0.0.254
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: antonhub/alpine
+    tags:
+    - latest
+    - 3.17
+
+- name: alpine builder
+  image: plugins/docker
+  privileged: true
+  volumes:
+  - name: data
+    path: /drone
+  settings:
+    storage_path: /drone/docker-storage
+    mirror: http://mirror.docker.local
+    custom_dns: 10.0.0.254
+    dockerfile: Dockerfile.builder
+    username:
+      from_secret: docker_username
+    password:
+      from_secret: docker_password
+    repo: antonhub/alpine
+    tags: 
+    - builder
+
+trigger:
+  branch:
+  - main
+  event:
+  - push
+
+volumes:
+- name: data
+  host:
+    path: /storage/drone-runner-docker
